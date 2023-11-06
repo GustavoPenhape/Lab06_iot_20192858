@@ -47,10 +47,10 @@ public class PuzzleActivity extends AppCompatActivity {
         iniciarJuegoButton.setOnClickListener(v -> {
             if (!isGameStarted) {
                 isGameStarted = true;
-                isResetting = true; // Asegúrate de establecer esto antes de mezclar.
-                shufflePuzzle(); // Esto mezclará el puzzle y llamará a swapPieces().
+                isResetting = true; 
+                shufflePuzzle();
                 iniciarJuegoButton.setText("Resetear");
-                isResetting = false; // Establece esto después de mezclar.
+                isResetting = false;
             } else {
                 isResetting = true;
                 isGameStarted = false;
@@ -65,7 +65,6 @@ public class PuzzleActivity extends AppCompatActivity {
         imageAdapter = new ImageDialogAdapter(this, new ArrayList<>());
         puzzleGridView.setAdapter(imageAdapter);
 
-        // Configurar el launcher para seleccionar imágenes.
         imagePickerLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
@@ -102,19 +101,14 @@ public class PuzzleActivity extends AppCompatActivity {
         });
     }
     private boolean isValidMove(int position) {
-        // Obtiene la posición de la fila y columna basada en el índice lineal
         int blankRow = blankPos / gridSize;
         int blankCol = blankPos % gridSize;
         int clickedRow = position / gridSize;
         int clickedCol = position % gridSize;
-
-        // Un movimiento es válido si el clic es en la misma fila o columna que el blanco,
-        // y está adyacente a él
         return (blankRow == clickedRow && Math.abs(blankCol - clickedCol) == 1) ||
                 (blankCol == clickedCol && Math.abs(blankRow - clickedRow) == 1);
     }
     private void swapPieces(int position) {
-        // Realiza el intercambio de piezas
         Log.d("PuzzleActivity", "swapPieces - Posición seleccionada: " + position + ", Posición en blanco: " + blankPos);
 
         Bitmap clickedPiece = puzzlePieces.get(position);
@@ -123,21 +117,18 @@ public class PuzzleActivity extends AppCompatActivity {
         puzzlePieces.set(blankPos, clickedPiece);
         puzzlePieces.set(position, blankPiece);
 
-        // Actualiza la posición del espacio en blanco
         blankPos = position;
         Log.d("PuzzleActivity", "swapPieces - Piezas intercambiadas. Nueva posición en blanco: " + blankPos);
 
         if (!isResetting && isPuzzleSolved()) {
             playWinSound();
             Toast.makeText(this, "¡Ganaste el juego!", Toast.LENGTH_LONG).show();
-            iniciarJuegoButton.setText("Iniciar Juego"); // Cambia el texto a Iniciar Juego
-            isGameStarted = false; // Restablece el juego a un estado no iniciado
-            // Puedes hacer otras acciones aquí, como deshabilitar los movimientos adicionales
+            iniciarJuegoButton.setText("Iniciar Juego");
+            isGameStarted = false;
         }
     }
     private boolean isPuzzleSolved() {
         for (int i = 0; i < puzzlePieces.size(); i++) {
-            // Asume que tienes alguna forma de comparar las piezas con su posición correcta
             if (!isCorrectPosition(puzzlePieces.get(i), i)) {
                 return false;
             }
@@ -146,11 +137,7 @@ public class PuzzleActivity extends AppCompatActivity {
     }
 
     private boolean isCorrectPosition(Bitmap piece, int position) {
-        // Aquí necesitas implementar la lógica para verificar si la pieza actual está
-        // en la posición correcta. Esto puede depender de cómo estás manejando
-        // las referencias de las imágenes o su orden.
-        // Por ejemplo, si inicialmente cada pieza estaba en el índice correspondiente
-        // y 'initialPuzzleState' contiene el estado solucionado, podrías hacer algo como:
+
         return piece.equals(initialPuzzleState.get(position));
     }
 
@@ -158,7 +145,7 @@ public class PuzzleActivity extends AppCompatActivity {
     private void shufflePuzzle() {
         Random random = new Random();
         int moves = 0;
-        while (moves < 100) { // Asegúrate de realizar al menos 50 movimientos
+        while (moves < 100) {
             ArrayList<Integer> validMoves = getValidMoves();
             if (!validMoves.isEmpty()) {
                 swapPieces(validMoves.get(random.nextInt(validMoves.size())));
@@ -167,7 +154,6 @@ public class PuzzleActivity extends AppCompatActivity {
         }
     }
 
-    // Esta función devuelve una lista de posiciones válidas para moverse
     private ArrayList<Integer> getValidMoves() {
         ArrayList<Integer> validMoves = new ArrayList<>();
         int blankRow = blankPos / gridSize;
@@ -197,7 +183,6 @@ public class PuzzleActivity extends AppCompatActivity {
 
             Bitmap scaledImage = Bitmap.createScaledBitmap(puzzleImage, width, height, true);
 
-            // No declares una nueva variable local aquí, solo limpia la existente o inicialízala si está vacía.
             if (puzzlePieces == null) {
                 puzzlePieces = new ArrayList<>();
             } else {
@@ -219,7 +204,6 @@ public class PuzzleActivity extends AppCompatActivity {
                 }
             }
 
-            // Asigna la última posición como la posición en blanco
             blankPos = puzzlePieces.size() - 1;
 
             imageAdapter.updatePuzzlePieces(puzzlePieces);
@@ -231,5 +215,4 @@ public class PuzzleActivity extends AppCompatActivity {
             Log.e("PuzzleActivity", "Error al cargar imagen: " + e.getMessage());
         }
     }
-    // No es necesario sobrecargar otros métodos si solo te interesa seleccionar la imagen.
 }
